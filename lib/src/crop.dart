@@ -12,6 +12,8 @@ class Crop extends StatelessWidget {
   /// original image data
   final Uint8List image;
 
+  /// original image data
+  final bool fixedCroppedArea;
   /// callback when cropping completed
   final ValueChanged<Uint8List> onCropped;
 
@@ -71,6 +73,7 @@ class Crop extends StatelessWidget {
     required this.image,
     required this.onCropped,
     this.aspectRatio,
+    this.fixedCroppedArea=false,
     this.initialSize,
     this.initialArea,
     this.withCircleUi = false,
@@ -95,6 +98,7 @@ class Crop extends StatelessWidget {
           data: newData,
           child: _CropEditor(
             image: image,
+            fixedCroppedArea: fixedCroppedArea,
             onCropped: onCropped,
             aspectRatio: aspectRatio,
             initialSize: initialSize,
@@ -120,6 +124,7 @@ class _CropEditor extends StatefulWidget {
   final double? initialSize;
   final Rect? initialArea;
   final bool withCircleUi;
+  final bool fixedCroppedArea;
   final CropController? controller;
   final ValueChanged<Rect>? onMoved;
   final ValueChanged<CropStatus>? onStatusChanged;
@@ -135,6 +140,7 @@ class _CropEditor extends StatefulWidget {
     this.initialSize,
     this.initialArea,
     this.withCircleUi = false,
+    this.fixedCroppedArea = false,
     this.controller,
     this.onMoved,
     this.onStatusChanged,
@@ -345,73 +351,85 @@ class _CropEditorState extends State<_CropEditor> {
               Positioned(
                 left: _rect.left - (dotTotalSize / 2),
                 top: _rect.top - (dotTotalSize / 2),
-                child: GestureDetector(
-                  onPanUpdate: (details) {
-                    rect = calculator.moveTopLeft(
-                      _rect,
-                      details.delta.dx,
-                      details.delta.dy,
-                      _imageRect,
-                      _aspectRatio,
-                    );
-                  },
-                  child: widget.cornerDotBuilder
-                          ?.call(dotTotalSize, EdgeAlignment.topLeft) ??
-                      const DotControl(),
+                child: IgnorePointer(
+                  ignoring: widget.fixedCroppedArea,
+                  child: GestureDetector(
+                    onPanUpdate: (details) {
+                      rect = calculator.moveTopLeft(
+                        _rect,
+                        details.delta.dx,
+                        details.delta.dy,
+                        _imageRect,
+                        _aspectRatio,
+                      );
+                    },
+                    child: widget.cornerDotBuilder
+                            ?.call(dotTotalSize, EdgeAlignment.topLeft) ??
+                        const DotControl(),
+                  ),
                 ),
               ),
               Positioned(
                 left: _rect.right - (dotTotalSize / 2),
                 top: _rect.top - (dotTotalSize / 2),
-                child: GestureDetector(
-                  onPanUpdate: (details) {
-                    rect = calculator.moveTopRight(
-                      _rect,
-                      details.delta.dx,
-                      details.delta.dy,
-                      _imageRect,
-                      _aspectRatio,
-                    );
-                  },
-                  child: widget.cornerDotBuilder
-                          ?.call(dotTotalSize, EdgeAlignment.topRight) ??
-                      const DotControl(),
+                child: IgnorePointer(
+                  ignoring: widget.fixedCroppedArea,
+                  child: GestureDetector(
+                    onPanUpdate: (details) {
+                      rect = calculator.moveTopRight(
+                        _rect,
+                        details.delta.dx,
+                        details.delta.dy,
+                        _imageRect,
+                        _aspectRatio,
+                      );
+                    },
+                    child: widget.cornerDotBuilder
+                            ?.call(dotTotalSize, EdgeAlignment.topRight) ??
+                        const DotControl(),
+                  ),
                 ),
               ),
               Positioned(
                 left: _rect.left - (dotTotalSize / 2),
                 top: _rect.bottom - (dotTotalSize / 2),
-                child: GestureDetector(
-                  onPanUpdate: (details) {
-                    rect = calculator.moveBottomLeft(
-                      _rect,
-                      details.delta.dx,
-                      details.delta.dy,
-                      _imageRect,
-                      _aspectRatio,
-                    );
-                  },
-                  child: widget.cornerDotBuilder
-                          ?.call(dotTotalSize, EdgeAlignment.bottomLeft) ??
-                      const DotControl(),
+                child: IgnorePointer(
+                  ignoring: widget.fixedCroppedArea,
+                  child: GestureDetector(
+                    onPanUpdate: (details) {
+                      rect = calculator.moveBottomLeft(
+                        _rect,
+                        details.delta.dx,
+                        details.delta.dy,
+                        _imageRect,
+                        _aspectRatio,
+                      );
+                    },
+                    child: widget.cornerDotBuilder
+                            ?.call(dotTotalSize, EdgeAlignment.bottomLeft) ??
+                        const DotControl(),
+                  ),
                 ),
               ),
               Positioned(
                 left: _rect.right - (dotTotalSize / 2),
                 top: _rect.bottom - (dotTotalSize / 2),
-                child: GestureDetector(
-                  onPanUpdate: (details) {
-                    rect = calculator.moveBottomRight(
-                      _rect,
-                      details.delta.dx,
-                      details.delta.dy,
-                      _imageRect,
-                      _aspectRatio,
-                    );
-                  },
-                  child: widget.cornerDotBuilder
-                          ?.call(dotTotalSize, EdgeAlignment.bottomRight) ??
-                      const DotControl(),
+                child: IgnorePointer(
+                  ignoring: widget.fixedCroppedArea,
+                  child: GestureDetector(
+                    onPanUpdate: (details) {
+                      rect = calculator.moveBottomRight(
+                        _rect,
+                        details.delta.dx,
+                        details.delta.dy,
+                        _imageRect,
+                        _aspectRatio,
+                      );
+                    },
+                    child: widget.cornerDotBuilder
+                            ?.call(dotTotalSize, EdgeAlignment.bottomRight) ??
+                        const DotControl(),
+                  ),
                 ),
               ),
             ],
